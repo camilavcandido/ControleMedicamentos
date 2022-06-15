@@ -1,4 +1,5 @@
 ﻿using ControleMedicamento.Infra.BancoDados.ModuloMedicamento;
+using ControleMedicamentos.Dominio.ModuloMedicamento;
 using ControleMedicamentos.Dominio.ModuloRequisicao;
 using ControleMedicamentos.Infra.BancoDados.ModuloFuncionario;
 using ControleMedicamentos.Infra.BancoDados.ModuloPaciente;
@@ -95,6 +96,14 @@ namespace ControleMedicamentos.Infra.BancoDados.ModuloRequisicao
 	            FROM 
 		            [TBREQUISICAO]";
 
+
+        private const string sqlAtualizarMedicamento =
+         @"UPDATE [TBMEDICAMENTO]	
+		        SET
+                    [QUANTIDADEDISPONIVEL] = @QUANTIDADEDISPONIVEL
+		        WHERE
+			        TBMEDICAMENTO.[ID] = @IDMEDICAMENTO";
+
         public ValidationResult Inserir(Requisicao requisicao)
         {
             var validador = new ValidadorRequisicao();
@@ -115,6 +124,8 @@ namespace ControleMedicamentos.Infra.BancoDados.ModuloRequisicao
             var id = comandoInsercao.ExecuteScalar();
             requisicao.Id = Convert.ToInt32(id);
 
+            var medicamentoSelecionado = repositorioMedicamento.SelecionarPorId(requisicao.Medicamento.Id);
+            AtualizarMedicamento(requisicao, medicamentoSelecionado);
             conexaoComBanco.Close();
 
             return resultadoValidacao;
@@ -194,6 +205,24 @@ namespace ControleMedicamentos.Infra.BancoDados.ModuloRequisicao
 
             return requisicoes;
         }
+
+        public void AtualizarMedicamento(Requisicao requisicao, Medicamento medicamento)
+        {
+
+            SqlConnection conexaoComBanco = new SqlConnection(enderecoBanco);
+
+            SqlCommand comandoEdicao = new SqlCommand(sqlAtualizarMedicamento, conexaoComBanco);
+
+            comandoEdicao.Parameters.AddWithValue("IDMEDICAMENTO", requisicao.Medicamento.Id);
+
+            comandoEdicao.Parameters.AddWithValue("QUANTIDADEDISPONIVEL", medicamento.QuantidadeDisponivel - requisicao.QtdMedicamento);
+
+            conexaoComBanco.Open();
+            comandoEdicao.ExecuteNonQuery();
+            conexaoComBanco.Close();
+
+        }
+
 
         #region metodos privados
 

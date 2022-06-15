@@ -105,11 +105,13 @@ namespace ControleMedicamentos.Infra.BancoDados.Tests.ModuloRequisicao
             var p2 = repositorioPaciente.SelecionarPorId(2);
             var p3 = repositorioPaciente.SelecionarPorId(3);
 
-            var medicamento = repositorioMedicamento.SelecionarPorId(1);
+            var medicamento1 = repositorioMedicamento.SelecionarPorId(1);
+            var medicamento2 = repositorioMedicamento.SelecionarPorId(2);
+            var medicamento3 = repositorioMedicamento.SelecionarPorId(3);
 
-            var r1 = new Requisicao(medicamento, p1, 1, System.DateTime.Today, funcionario);
-            var r2 = new Requisicao(medicamento, p2, 2, System.DateTime.Today, funcionario);
-            var r3 = new Requisicao(medicamento, p3, 4, System.DateTime.Today, funcionario);
+            var r1 = new Requisicao(medicamento1, p1, 100, System.DateTime.Today, funcionario);
+            var r2 = new Requisicao(medicamento2, p2, 150, System.DateTime.Today, funcionario);
+            var r3 = new Requisicao(medicamento3, p3, 40, System.DateTime.Today, funcionario);
 
             repositorioRequisicao.Inserir(r1);
             repositorioRequisicao.Inserir(r2);

@@ -82,6 +82,21 @@ namespace ControleMedicamento.Infra.BancoDados.ModuloMedicamento
                     [FORNECEDOR_ID]
 	            FROM 
 		            [TBMEDICAMENTO]";
+
+
+        private const string sqlSelecionarTodosComBaixaQuantidade =
+        @"SELECT 
+		            [ID], 
+                    [NOME],
+                    [DESCRICAO],
+                    [LOTE],
+                    [VALIDADE],
+                    [QUANTIDADEDISPONIVEL],
+                    [FORNECEDOR_ID]
+	            FROM 
+		            [TBMEDICAMENTO]
+            WHERE QUANTIDADEDISPONIVEL <= 10
+                ";
         #endregion
 
         public ValidationResult Inserir(Medicamento medicamento)
@@ -171,6 +186,25 @@ namespace ControleMedicamento.Infra.BancoDados.ModuloMedicamento
             SqlConnection conexaoComBanco = new SqlConnection(enderecoBanco);
 
             SqlCommand comandoSelecao = new SqlCommand(sqlSelecionarTodos, conexaoComBanco);
+            conexaoComBanco.Open();
+
+            SqlDataReader leitorMedicamento = comandoSelecao.ExecuteReader();
+
+            List<Medicamento> medicamentos = new List<Medicamento>();
+
+            while (leitorMedicamento.Read())
+                medicamentos.Add(ConverterParaMedicamento(leitorMedicamento));
+
+            conexaoComBanco.Close();
+
+            return medicamentos;
+        }
+
+        public List<Medicamento> SelecionarTodosComBaixaQuantidade()
+        {
+            SqlConnection conexaoComBanco = new SqlConnection(enderecoBanco);
+
+            SqlCommand comandoSelecao = new SqlCommand(sqlSelecionarTodosComBaixaQuantidade, conexaoComBanco);
             conexaoComBanco.Open();
 
             SqlDataReader leitorMedicamento = comandoSelecao.ExecuteReader();

@@ -90,7 +90,7 @@ namespace ControleMedicamento.Infra.BancoDados.Tests.ModuloMedicamento
         public void Deve_selecionar_todos_os_medicamentos()
         {
             //arrange
-            var m1 = new Medicamento("Cloridrato de metformina 500mg", "Lorem Ipsum is simply", "999PSQ", new DateTime(2027, 05, 02), 202);
+            var m1 = new Medicamento("Cloridrato de metformina 500mg", "Lorem Ipsum is simply", "999PSQ", new DateTime(2027, 05, 02), 200);
             m1.Fornecedor = repositorioFornecedor.SelecionarPorId(1);
             var m2 = new Medicamento("Captopril 25mg", "Lorem Ipsum is simply", "888635", new DateTime(2024, 08, 09), 300);
             m2.Fornecedor = repositorioFornecedor.SelecionarPorId(1); 
@@ -112,6 +112,30 @@ namespace ControleMedicamento.Infra.BancoDados.Tests.ModuloMedicamento
             Assert.AreEqual(m2.Id, medicamentos[1].Id);
             Assert.AreEqual(m3.Id, medicamentos[2].Id);
 
+        }
+
+        [TestMethod]
+        public void Deve_selecionar_todos_os_medicamentos_com_baixa_quantidade()
+        {
+            var m1 = new Medicamento("Medicamento UM", "Lorem Ipsum is simply", "999PSQ", new DateTime(2027, 05, 02), 10);
+            m1.Fornecedor = repositorioFornecedor.SelecionarPorId(1);
+            var m2 = new Medicamento("Medicamento DOIS", "Lorem Ipsum is simply", "888635", new DateTime(2024, 08, 09), 9);
+            m2.Fornecedor = repositorioFornecedor.SelecionarPorId(1);
+            var m3 = new Medicamento("Medicamento TRÊS", "Lorem Ipsum is simply", "452LDS", new DateTime(2026, 04, 04), 50);
+            m3.Fornecedor = repositorioFornecedor.SelecionarPorId(1);
+
+            repositorio.Inserir(m1);
+            repositorio.Inserir(m2);
+            repositorio.Inserir(m3);
+
+            //action
+            var medicamentos = repositorio.SelecionarTodosComBaixaQuantidade();
+
+            //assert
+
+            Assert.AreEqual(2, medicamentos.Count);
+            Assert.AreEqual(m1.Id, medicamentos[0].Id);
+            Assert.AreEqual(m2.Id, medicamentos[1].Id);
         }
     }
 }
